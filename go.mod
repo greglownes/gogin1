@@ -2,7 +2,11 @@ module github.com/greglownes/gogin1
 
 go 1.17
 
-require github.com/gin-gonic/gin v1.7.4
+require (
+	github.com/davecgh/go-spew v1.1.1
+	github.com/gin-gonic/gin v1.7.4
+	github.com/joho/godotenv v1.3.0
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
