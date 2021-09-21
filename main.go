@@ -3,13 +3,16 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/greglownes/gogin1/configs"
+	"github.com/greglownes/gogin1/controllers"
 	"github.com/greglownes/gogin1/models"
+	"github.com/greglownes/gogin1/services/pingservice"
+
+	"log"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
 )
 
 func main() {
@@ -29,13 +32,15 @@ func main() {
 	// auto migrate
 	db.AutoMigrate(&models.User{}, &models.PasswordReset{})
 
-	// setup gin routing
-	r := gin.Default()
+	// setup services
+	pingService := pingservice.NewPingService()
+
+	// setup controllers
+	pingController := controllers.NewPingController(pingService)
+
 	// routing
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong, hello world, greg was here",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router := gin.Default()
+	api := router.Group("/api")
+	api.GET("/ping", pingController.Ping)
+	router.Run() // localhost:8080
 }
