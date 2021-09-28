@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/greglownes/gogin1/models"
 	"github.com/greglownes/gogin1/services/topicservice"
@@ -18,6 +17,15 @@ type TopicControllerInterface interface {
 	Update(*gin.Context)
 	Delete(*gin.Context)
 }
+
+// testing notes
+// curl -X PUT -d '{"Title":"change"}' localhost:8080/api/topic/1
+//
+// curl -X DELETE localhost:8080/api/topic/a
+// curl -X DELETE localhost:8080/api/topic/1000
+// curl -X DELETE localhost:8080/api/topic/1
+//
+// curl -X PUT -d '{"Title":"change"}' localhost:8080/api/topic/1
 
 // controller struct and new function used in setup
 type topicController struct {
@@ -83,13 +91,13 @@ func (controller *topicController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	spew.Dump(cti)
+	// spew.Dump(cti)
 
 	// convert input to model
 	topic := models.Topic{
 		Title: cti.Title,
 	}
-	spew.Dump(topic)
+	// spew.Dump(topic)
 
 	// create topic using service
 	if err := controller.topicService.Create(&topic); err != nil {

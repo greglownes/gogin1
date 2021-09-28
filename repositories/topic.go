@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/greglownes/gogin1/models"
 
 	"gorm.io/gorm"
@@ -28,7 +27,7 @@ func NewTopicRepo(db *gorm.DB) TopicRepoInterface {
 func (t *topicRepo) GetAll() ([]models.Topic, error) {
 	var topics []models.Topic
 	t.db.Find(&topics)
-	spew.Dump(topics)
+	// spew.Dump(topics)
 	return topics, nil
 }
 

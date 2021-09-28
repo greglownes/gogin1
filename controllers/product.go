@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/greglownes/gogin1/services/productservice"
 )
@@ -36,20 +37,33 @@ func (controller *productController) GetByID(c *gin.Context) {
 }
 
 func (controller *productController) Create(c *gin.Context) {
+	// #1
 	// OPEN authentication/authority
 
+	// #2
 	// raw input -> model
-	product, err := controller.productService.CreateModelForAddFromRawInput(c)
+	product, status, err := controller.productService.CreateModelForAddFromRawInput(c)
+	spew.Dump(product)
+	spew.Dump(status)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
+	// #3
+	// validation: status must already exist
+	_, err = controller.productService.ValidateForAdd(&product, &status)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// #4
 	// add to db
 	if err := controller.productService.Create(&product); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// #5
 	// create response with clean/santitize from model and return
 	productOutput := controller.productService.MapProductToProductOutput(&product)
 	c.JSON(http.StatusOK, gin.H{"data": productOutput})

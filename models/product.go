@@ -11,7 +11,7 @@ type Product struct {
 	Title    string          `gorm:"size:255"`
 	Price    decimal.Decimal `json:"price" sql:"type:decimal(20,8);"`
 	StatusID uint
-	Status   Status `json:"status"` // used to populate obj for create
+	// Status   Status `json:"status"` // used to populate obj for create
 }
 
 // ProductCreateInput for capturing user input for add

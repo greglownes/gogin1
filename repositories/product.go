@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/greglownes/gogin1/models"
 	"gorm.io/gorm"
 )
@@ -39,7 +38,7 @@ func (t *productRepo) GetByID(id uint) (*models.Product, error) {
 }
 
 func (t *productRepo) Create(product *models.Product) error {
-	spew.Dump(product)
+	// spew.Dump(product)
 	return t.db.Create(product).Error
 
 	// hold := &models.Product{

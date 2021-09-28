@@ -3,7 +3,6 @@ package productservice
 import (
 	"errors"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/greglownes/gogin1/models"
 	"github.com/greglownes/gogin1/repositories"
@@ -16,7 +15,8 @@ type ProductServiceInterface interface {
 	Update(*models.Product) error
 	Delete(*models.Product) error
 
-	CreateModelForAddFromRawInput(c *gin.Context) (models.Product, error)
+	CreateModelForAddFromRawInput(c *gin.Context) (models.Product, models.Status, error)
+	ValidateForAdd(product *models.Product, status *models.Status) ([]string, error)
 	MapProductToProductOutput(product *models.Product) models.ProductOutput
 }
 
@@ -51,9 +51,9 @@ func (service *productService) GetByID(id uint) (*models.Product, error) {
 }
 
 func (service *productService) Create(product *models.Product) error {
-	spew.Dump(product)
+	// spew.Dump(product)
 	hold := service.ProductRepo.Create(product)
-	spew.Dump(hold)
+	// spew.Dump(hold)
 	return hold
 }
 
@@ -66,25 +66,38 @@ func (service *productService) Delete(product *models.Product) error {
 	return nil
 }
 
-func (service *productService) CreateModelForAddFromRawInput(c *gin.Context) (models.Product, error) {
+func (service *productService) CreateModelForAddFromRawInput(c *gin.Context) (models.Product, models.Status, error) {
 	// validate input
 	var rawInput models.ProductCreateInput
 	if err := c.ShouldBindJSON(&rawInput); err != nil {
-		spew.Dump(err)
-		return models.Product{}, err
+		// spew.Dump(err)
+		return models.Product{}, models.Status{}, err
 	}
-	spew.Dump(rawInput)
+	// spew.Dump(rawInput)
 
 	// convert raw input to model
 	// skip ID and 3 date fields, that is handled by gorm
 	product := models.Product{
-		Title:  rawInput.Title,
-		Price:  rawInput.Price,
-		Status: rawInput.Status,
+		Title: rawInput.Title,
+		Price: rawInput.Price,
+		// Status: rawInput.Status,
 		// StatusID int
 	}
-	spew.Dump(product)
-	return product, nil
+	status := models.Status{
+		Status: rawInput.Status.Status,
+	}
+
+	// spew.Dump(product)
+	return product, status, nil
+}
+
+func (service *productService) ValidateForAdd(product *models.Product, status *models.Status) ([]string, error) {
+	// make sure that status exists
+	// lookup
+	// if status does not exist, then return errors
+	// if status does     exist, then take id and set it in object so product can use it
+	product.StatusID = 99
+	return []string{}, nil
 }
 
 func (service *productService) MapProductToProductOutput(product *models.Product) models.ProductOutput {
